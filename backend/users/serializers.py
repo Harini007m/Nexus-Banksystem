@@ -1,7 +1,23 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 User = get_user_model()
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """Custom serializer to use 'email' as the login field instead of 'username'"""
+    username_field = 'email'
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Replace 'username' field with 'email'
+        self.fields['email'] = self.fields.pop('username', serializers.CharField())
+    
+    def validate(self, attrs):
+        # Map email to username for the parent class
+        attrs['username'] = attrs.get('email', '')
+        return super().validate(attrs)
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
