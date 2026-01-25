@@ -1,12 +1,114 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../layouts/DashboardLayout';
 import api from '../api/axios';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     FiPlus, FiCheckCircle, FiXCircle, FiClock, FiDollarSign, FiCreditCard,
     FiFileText, FiAlertTriangle, FiInfo, FiCheck, FiChevronRight, FiArrowRight,
-    FiHome, FiTruck, FiBriefcase, FiBook, FiUser
+    FiHome, FiTruck, FiBriefcase, FiBook, FiUser, FiActivity
 } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
+
+const LoanProgressTracker = ({ currentStage, stages }) => {
+    return (
+        <div className="w-full py-8">
+            <div className="relative">
+                {/* Progress Bar Background */}
+                <div className="absolute top-1/2 left-0 w-full h-1 bg-slate-800 -translate-y-1/2 rounded-full z-0 overflow-hidden">
+                    <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${((currentStage - 1) / (stages.length - 1)) * 100}%` }}
+                        transition={{ duration: 1, ease: "easeInOut" }}
+                        className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
+                    />
+                </div>
+
+                <div className="flex justify-between relative z-10">
+                    {stages.map((stage, index) => {
+                        const isCompleted = currentStage > stage.step;
+                        const isActive = currentStage === stage.step;
+                        const isPending = currentStage < stage.step;
+
+                        return (
+                            <div key={stage.step} className="flex flex-col items-center group cursor-default">
+                                <motion.div
+                                    initial={false}
+                                    animate={{
+                                        scale: isActive ? 1.2 : 1,
+                                        borderColor: isActive ? '#3b82f6' : isCompleted ? '#22c55e' : '#334155'
+                                    }}
+                                    className={`
+                                        w-10 h-10 rounded-full flex items-center justify-center border-4 
+                                        transition-colors duration-300 relative bg-slate-900
+                                        ${isCompleted ? 'border-green-500 text-green-400' :
+                                            isActive ? 'border-blue-500 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.5)]' :
+                                                'border-slate-700 text-slate-600'}
+                                    `}
+                                >
+                                    {isCompleted ? <FiCheck className="text-xl" /> :
+                                        isActive ? <FiActivity className="animate-pulse" /> :
+                                            <span className="text-sm font-bold">{stage.step}</span>}
+
+                                    {/* Active Pulse Effect */}
+                                    {isActive && (
+                                        <motion.div
+                                            initial={{ opacity: 0.5, scale: 1 }}
+                                            animate={{ opacity: 0, scale: 2 }}
+                                            transition={{ duration: 1.5, repeat: Infinity }}
+                                            className="absolute inset-0 rounded-full bg-blue-500/30 -z-10"
+                                        />
+                                    )}
+                                </motion.div>
+
+                                {/* Stage Label */}
+                                <div className="absolute top-14 w-32 text-center transition-all duration-300">
+                                    <p className={`text-xs font-semibold mb-1 ${isActive ? 'text-blue-400' : isCompleted ? 'text-green-400' : 'text-slate-500'
+                                        }`}>
+                                        {stage.name}
+                                    </p>
+
+                                    {/* Hover Details */}
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -10 }}
+                                        whileHover={{ opacity: 1, y: 0 }}
+                                        className="hidden md:block opacity-0 group-hover:opacity-100 transition-opacity absolute left-1/2 -translate-x-1/2 top-full w-48 bg-slate-800 p-2 rounded-lg border border-slate-700 shadow-xl z-20 pointer-events-none"
+                                    >
+                                        <p className="text-[10px] text-slate-400 text-center">
+                                            {isCompleted ? 'Completed successfully' :
+                                                isActive ? 'Currently being processed by our team' :
+                                                    'Waiting for previous steps'}
+                                        </p>
+                                    </motion.div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* Context Banner */}
+            <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-20 bg-blue-500/5 border border-blue-500/10 rounded-xl p-4 flex items-start gap-3"
+            >
+                <div className="w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center flex-shrink-0">
+                    <FiInfo />
+                </div>
+                <div>
+                    <h4 className="text-sm font-semibold text-blue-100">Current Status: {stages[currentStage - 1]?.name}</h4>
+                    <p className="text-xs text-slate-400 mt-1">
+                        {currentStage === 1 && "We have received your application. It is currently under initial review."}
+                        {currentStage === 2 && "Our credit team is analyzing your financial profile and CIBIL score."}
+                        {currentStage === 3 && "Legal team is verifying your submitted documents for compliance."}
+                        {currentStage === 4 && "Final executive review before funds release."}
+                        {currentStage === 5 && "Funds have been approved! Disbursement is in progress."}
+                    </p>
+                </div>
+            </motion.div>
+        </div>
+    );
+};
 
 const Loans = () => {
     const { user } = useAuth();
@@ -201,27 +303,10 @@ const Loans = () => {
 
                             {/* Workflow Progress (for non-final statuses) */}
                             {!loan.is_rejected && loan.status !== 'PAID' && (
-                                <div className="mb-6">
-                                    <div className="flex items-center justify-between mb-2">
-                                        {getWorkflowStages().map((stage, index) => (
-                                            <div key={stage.step} className="flex items-center">
-                                                <div className={`flex flex-col items-center`}>
-                                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${loan.current_stage >= stage.step
-                                                            ? 'bg-green-500 text-white'
-                                                            : 'bg-slate-700 text-slate-400'
-                                                        }`}>
-                                                        {loan.current_stage > stage.step ? <FiCheck /> : stage.step}
-                                                    </div>
-                                                    <span className="text-xs text-slate-500 mt-1 hidden sm:block">{stage.name}</span>
-                                                </div>
-                                                {index < 4 && (
-                                                    <div className={`w-8 sm:w-16 h-1 mx-1 rounded ${loan.current_stage > stage.step ? 'bg-green-500' : 'bg-slate-700'
-                                                        }`}></div>
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
+                                <LoanProgressTracker
+                                    currentStage={parseInt(loan.current_stage || 1)}
+                                    stages={getWorkflowStages()}
+                                />
                             )}
 
                             {/* Rejection Notice */}
@@ -241,7 +326,7 @@ const Loans = () => {
 
                             {/* EMI Details - Show for DISBURSED loans */}
                             {loan.status === 'DISBURSED' && loan.monthly_emi && (
-                                <div className="bg-slate-800/50 rounded-xl p-4 mb-4">
+                                <div className="bg-slate-800/50 rounded-xl p-4 mb-4 mt-6">
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                                         <div>
                                             <p className="text-slate-500 text-sm">Monthly EMI</p>
@@ -282,7 +367,7 @@ const Loans = () => {
                             )}
 
                             {/* Loan Details Grid */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-6 pt-6 border-t border-slate-700/50">
                                 <div>
                                     <p className="text-slate-500">Duration</p>
                                     <p className="text-white">{loan.duration_months} months</p>
@@ -417,8 +502,8 @@ const Loans = () => {
                                                     type="button"
                                                     onClick={() => setLoanType(item.type)}
                                                     className={`flex items-center gap-2 p-3 rounded-lg border transition-all ${loanType === item.type
-                                                            ? 'bg-blue-500/20 border-blue-500/50 text-blue-400'
-                                                            : 'bg-slate-800/50 border-slate-700 text-slate-400 hover:border-slate-600'
+                                                        ? 'bg-blue-500/20 border-blue-500/50 text-blue-400'
+                                                        : 'bg-slate-800/50 border-slate-700 text-slate-400 hover:border-slate-600'
                                                         }`}
                                                 >
                                                     {item.icon} {item.label}
