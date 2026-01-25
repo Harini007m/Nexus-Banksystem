@@ -11,18 +11,24 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Replace 'username' field with 'email'
         self.fields['email'] = self.fields.pop('username', serializers.CharField())
     
     def validate(self, attrs):
-        # Map email to username for the parent class
         attrs['username'] = attrs.get('email', '')
         return super().validate(attrs)
 
+
 class UserSerializer(serializers.ModelSerializer):
+    role_display = serializers.ReadOnlyField()
+    is_officer = serializers.ReadOnlyField()
+    
     class Meta:
         model = User
-        fields = ['id', 'email', 'first_name', 'last_name', 'role', 'is_verified', 'phone_number']
+        fields = [
+            'id', 'email', 'first_name', 'last_name', 'role', 'role_display',
+            'is_verified', 'phone_number', 'employee_id', 'department', 'is_officer'
+        ]
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -38,10 +44,12 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password'],
             first_name=validated_data.get('first_name', ''),
             last_name=validated_data.get('last_name', ''),
-            phone_number=validated_data.get('phone_number', '')
+            phone_number=validated_data.get('phone_number', ''),
+            role='USER',  # Regular users only
+            is_verified=True  # Auto-verify for demo
         )
-        # Note: In a real app, generate/send OTP here for email verification
         return user
+
 
 class OTPVerifySerializer(serializers.Serializer):
     email = serializers.EmailField()

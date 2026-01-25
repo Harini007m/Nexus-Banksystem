@@ -8,9 +8,9 @@
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind-4.x-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-A modern, full-stack banking application with a beautiful glassmorphism UI design.
+A modern, full-stack banking application with multi-stage loan approval workflow, role-based access control, and beautiful glassmorphism UI.
 
-[Features](#-features) • [Installation](#-installation) • [Running](#-running-the-application) • [API](#-api-endpoints) • [Screenshots](#-screenshots)
+[Features](#-features) • [Workflow](#-loan-approval-workflow) • [Installation](#-installation) • [Usage](#-usage) • [API](#-api-endpoints)
 
 </div>
 
@@ -18,33 +18,57 @@ A modern, full-stack banking application with a beautiful glassmorphism UI desig
 
 ## ✨ Features
 
-### 👤 User Management
-- **JWT Authentication** - Secure login and registration with token refresh
-- **Role-based Access** - Admin and User roles with different permissions
-- **Profile Display** - User information shown in the dashboard
+### 🌐 Public Website (No Login Required)
+- **Landing Page** - Bank information, services overview
+- **Loan Products** - View all loan types with interest rates and eligibility
+- **How It Works** - 4-step loan approval process explanation
+- **Contact Information** - Bank contact details
 
-### 💰 Account Management
-- **Balance Tracking** - Real-time account balance display
-- **Deposit & Withdraw** - Direct deposit and withdrawal functionality
-- **Quick Transfer** - Transfer funds to other accounts instantly
-- **Transaction History** - Complete record of all transactions
+### � Customer Features (Login Required)
+- **Apply for Loans** - Personal, Home, Vehicle, Business, Education loans
+- **Track Applications** - Real-time workflow stage tracking
+- **EMI Management** - Pay monthly installments
+- **View Transactions** - Complete transaction history
+- **Investments** - Browse and invest in plans
 
-### 📋 Loan Management
-- **Loan Applications** - Apply for loans with custom amounts and purposes
-- **EMI System** - Monthly installment payments with interest calculation
-- **Progress Tracking** - Visual progress bar showing repayment status
-- **Admin Approval** - Admins can approve or reject loan requests
-- **Full Repayment** - Option to pay off entire loan early
+### � Officer Features (4 Specialized Roles)
+Each officer has a dedicated dashboard showing only loans relevant to their stage:
 
-### 📈 Investment Management
-- **Investment Plans** - Browse available investment options
-- **Portfolio View** - Track your active investments
-- **Maturity Processing** - Admins can process matured investments
-- **Interest Calculation** - Automatic interest computation on returns
+| Role | Responsibilities |
+|------|-----------------|
+| **Application Officer** | KYC verification, document check, initial screening |
+| **Credit Officer** | CIBIL score check, income verification, FOIR/EMI calculation |
+| **Legal Officer** | Title verification, encumbrance check, legal compliance |
+| **Disbursement Manager** | Final approval, sanction letter, loan disbursement |
 
-### 🔔 Notifications
-- **Real-time Updates** - Recent transaction notifications
-- **Activity Feed** - Track deposits, withdrawals, and transfers
+---
+
+## 🔄 Loan Approval Workflow
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   Customer      │     │  Application    │     │    Credit       │     │    Legal        │
+│   Applies       │ ──▶ │    Officer      │ ──▶ │    Officer      │ ──▶ │    Officer      │
+│                 │     │   (KYC Check)   │     │ (Credit Check)  │     │ (Legal Check)   │
+└─────────────────┘     └─────────────────┘     └─────────────────┘     └─────────────────┘
+                                                                                  │
+                                                                                  ▼
+                        ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+                        │   Customer      │     │   Disbursement  │     │   Disbursement  │
+                        │   Receives      │ ◀── │    Manager      │ ◀── │    Manager      │
+                        │   Funds         │     │  (Disburse)     │     │ (Final Review)  │
+                        └─────────────────┘     └─────────────────┘     └─────────────────┘
+```
+
+### Workflow Stages:
+1. **SUBMITTED** → Customer submits loan application
+2. **APPLICATION_REVIEW** → Application Officer reviews KYC & documents
+3. **CREDIT_REVIEW** → Credit Officer analyzes creditworthiness
+4. **LEGAL_REVIEW** → Legal Officer verifies documents & compliance
+5. **FINAL_REVIEW** → Disbursement Manager reviews all reports
+6. **APPROVED** → Loan is sanctioned
+7. **DISBURSED** → Funds credited to customer account
+8. **PAID** → All EMIs paid, loan closed
 
 ---
 
@@ -57,7 +81,6 @@ A modern, full-stack banking application with a beautiful glassmorphism UI desig
 | Django REST Framework | API Development |
 | SimpleJWT | Authentication |
 | SQLite/PostgreSQL | Database |
-| Django CORS Headers | Cross-Origin Support |
 
 ### Frontend
 | Technology | Purpose |
@@ -67,119 +90,98 @@ A modern, full-stack banking application with a beautiful glassmorphism UI desig
 | Tailwind CSS 4 | Styling |
 | Axios | HTTP Client |
 | React Router | Navigation |
-| ApexCharts | Data Visualization |
 | Framer Motion | Animations |
-| React Icons | Icon Library |
 
 ---
 
 ## 📦 Installation
 
 ### Prerequisites
+- **Python 3.10+** - [Download](https://python.org/downloads)
+- **Node.js 18+** - [Download](https://nodejs.org)
+- **Git** - [Download](https://git-scm.com)
 
-Make sure you have the following installed on your system:
-- **Python 3.10+** - [Download Python](https://python.org/downloads)
-- **Node.js 18+** - [Download Node.js](https://nodejs.org)
-- **Git** - [Download Git](https://git-scm.com)
-
-### Step 1: Clone the Repository
-
+### Step 1: Clone Repository
 ```bash
 git clone https://github.com/Harini007m/Nexus-Banksystem.git
 cd Nexus-Banksystem
 ```
 
 ### Step 2: Backend Setup
+```bash
+# Create virtual environment
+python -m venv venv
 
-1. **Create a virtual environment:**
+# Activate (Windows)
+venv\Scripts\activate
 
-   ```bash
-   # Windows
-   python -m venv venv
-   venv\Scripts\activate
+# Activate (macOS/Linux)
+source venv/bin/activate
 
-   # macOS/Linux
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
+# Install dependencies
+pip install -r backend/requirements.txt
 
-2. **Install Python dependencies:**
+# Run migrations
+cd backend
+python manage.py migrate
 
-   ```bash
-   pip install -r backend/requirements.txt
-   ```
-
-3. **Run database migrations:**
-
-   ```bash
-   cd backend
-   python manage.py migrate
-   ```
-
-4. **Create initial data (admin user & sample data):**
-
-   ```bash
-   python manage.py seed_data
-   ```
-
-   This creates:
-   - Admin account: `admin@nexus.com` / `adminpassword123`
-   - User account: `user@nexus.com` / `userpassword123`
-   - Sample investment plans
+# Create users (customer + 4 officers)
+python manage.py seed_data
+```
 
 ### Step 3: Frontend Setup
-
-1. **Open a new terminal and navigate to the frontend:**
-
-   ```bash
-   cd frontend
-   ```
-
-2. **Install Node dependencies:**
-
-   ```bash
-   npm install
-   ```
+```bash
+cd frontend
+npm install
+```
 
 ---
 
-## 🚀 Running the Application
+## 🚀 Usage
 
-You need **two terminal windows** - one for the backend and one for the frontend.
+### Start the Application
 
-### Terminal 1: Start the Backend Server
-
+**Terminal 1 - Backend:**
 ```bash
-# Make sure you're in the project root with venv activated
 cd backend
 python manage.py runserver
 ```
+Backend runs at: **http://127.0.0.1:8000**
 
-The backend will start at: **http://127.0.0.1:8000**
-
-### Terminal 2: Start the Frontend Server
-
+**Terminal 2 - Frontend:**
 ```bash
 cd frontend
 npm run dev
 ```
+Frontend runs at: **http://localhost:5173**
 
-The frontend will start at: **http://localhost:5173**
+### Access Points
 
-### 🎉 Access the Application
-
-Open your browser and go to: **http://localhost:5173**
+| URL | Description |
+|-----|-------------|
+| `http://localhost:5173/home` | Public landing page (no login) |
+| `http://localhost:5173/login` | Login page |
+| `http://localhost:5173/dashboard` | Customer dashboard |
+| `http://localhost:5173/officer` | Officer dashboard |
 
 ---
 
-## 🔑 Default Login Credentials
+## 🔑 Login Credentials
+
+### Customer Account
+| Field | Value |
+|-------|-------|
+| Email | `user@nexus.com` |
+| Password | `userpassword123` |
+
+### Officer Accounts
 
 | Role | Email | Password |
 |------|-------|----------|
-| **Admin** | admin@nexus.com | adminpassword123 |
-| **User** | user@nexus.com | userpassword123 |
-
-> **Note:** Admin users can approve/reject loans and mature investments. Regular users can apply for loans, make investments, and manage their accounts.
+| **Application Officer** | `application.officer@nexus.com` | `officer123` |
+| **Credit Officer** | `credit.officer@nexus.com` | `officer123` |
+| **Legal Officer** | `legal.officer@nexus.com` | `officer123` |
+| **Disbursement Manager** | `disbursement.manager@nexus.com` | `officer123` |
 
 ---
 
@@ -187,128 +189,109 @@ Open your browser and go to: **http://localhost:5173**
 
 ```
 Nexus-Banksystem/
-├── backend/                    # Django Backend
-│   ├── accounts/              # Account & Transaction management
-│   ├── investments/           # Investment plans & portfolios
-│   ├── loans/                 # Loan applications & EMI system
-│   ├── users/                 # User authentication & management
-│   ├── nexus_bank/            # Django project settings
-│   └── manage.py
+├── backend/
+│   ├── accounts/          # Account & Transaction management
+│   ├── investments/       # Investment plans & portfolios
+│   ├── loans/             # Multi-stage loan workflow
+│   ├── users/             # Authentication & roles
+│   └── nexus_bank/        # Django settings
 │
-├── frontend/                   # React Frontend
-│   ├── src/
-│   │   ├── api/               # Axios configuration
-│   │   ├── components/        # Reusable UI components
-│   │   ├── context/           # React Context (Auth)
-│   │   ├── layouts/           # Page layouts
-│   │   ├── pages/             # Application pages
-│   │   ├── App.jsx            # Main app component
-│   │   ├── main.jsx           # Entry point
-│   │   └── index.css          # Global styles
-│   ├── package.json
-│   └── vite.config.js
-│
-├── venv/                       # Python virtual environment
-├── requirements.txt            # Python dependencies
-└── README.md                   # You are here!
+├── frontend/
+│   └── src/
+│       ├── pages/
+│       │   ├── LandingPage.jsx    # Public page
+│       │   ├── Dashboard.jsx      # Customer dashboard
+│       │   ├── OfficerDashboard.jsx # Officer dashboard
+│       │   ├── Loans.jsx          # Customer loans
+│       │   └── ...
+│       ├── components/
+│       └── context/
 ```
 
 ---
 
 ## 🔗 API Endpoints
 
+### Public Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/users/bank-info/` | Bank info for public page |
+
 ### Authentication
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/api/users/register/` | Register new user |
-| POST | `/api/users/login/` | Login & get JWT tokens |
-| POST | `/api/users/token/refresh/` | Refresh access token |
+| POST | `/api/users/register/` | Register new customer |
+| POST | `/api/users/login/` | Login (email + password) |
+| GET | `/api/users/profile/` | Get user profile |
 
-### Accounts
+### Customer - Loans
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/accounts/balance/` | Get account balance & transactions |
-| POST | `/api/accounts/deposit/` | Deposit funds |
-| POST | `/api/accounts/withdraw/` | Withdraw funds |
-| POST | `/api/accounts/transfer/` | Transfer to another account |
+| GET | `/api/loans/` | List my loans |
+| POST | `/api/loans/` | Apply for loan |
+| POST | `/api/loans/{id}/pay-emi/` | Pay EMI |
 
-### Loans
+### Officer Endpoints
+
+**Application Officer:**
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/loans/` | List all loans (user's or all for admin) |
-| POST | `/api/loans/` | Apply for a new loan |
-| POST | `/api/loans/{id}/respond/` | Admin: Approve/Reject loan |
-| POST | `/api/loans/{id}/pay-emi/` | Pay monthly EMI |
-| POST | `/api/loans/{id}/repay/` | Full loan repayment |
+| GET | `/api/loans/officer/application/` | Pending applications |
+| POST | `/api/loans/officer/application/{id}/review/` | Review & approve/reject |
 
-### Investments
+**Credit Officer:**
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/investments/plans/` | List investment plans |
-| GET | `/api/investments/my-investments/` | User's investments |
-| POST | `/api/investments/invest/` | Make new investment |
-| POST | `/api/investments/{id}/mature/` | Admin: Process maturity |
+| GET | `/api/loans/officer/credit/` | Pending credit review |
+| POST | `/api/loans/officer/credit/{id}/review/` | Submit credit analysis |
+
+**Legal Officer:**
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/loans/officer/legal/` | Pending legal review |
+| POST | `/api/loans/officer/legal/{id}/review/` | Submit legal verification |
+
+**Disbursement Manager:**
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/loans/officer/disbursement/` | Pending final review |
+| POST | `/api/loans/officer/disbursement/{id}/review/` | Approve/Disburse/Reject |
 
 ---
 
-## 🖼️ Screenshots
+## � Testing the Complete Workflow
 
-### Dashboard
-The main dashboard displays your account balance, recent transactions, and financial analytics.
+1. **As Customer** (`user@nexus.com`):
+   - Visit `/home` to see public page
+   - Login and go to `/loans`
+   - Apply for a new loan
 
-### Loans Page
-Apply for loans, track EMI payments, and view loan status with progress indicators.
+2. **As Application Officer** (`application.officer@nexus.com`):
+   - Login and view queue at `/officer`
+   - Review application, verify KYC, approve
 
-### Investments Page
-Browse investment plans and manage your investment portfolio.
+3. **As Credit Officer** (`credit.officer@nexus.com`):
+   - Login and view queue
+   - Enter CIBIL score, verify income, calculate FOIR, approve
 
----
+4. **As Legal Officer** (`legal.officer@nexus.com`):
+   - Login and view queue
+   - Verify title, check encumbrance, confirm compliance, approve
 
-## 🔧 Troubleshooting
+5. **As Disbursement Manager** (`disbursement.manager@nexus.com`):
+   - Login and view queue
+   - Review all reports, approve, then disburse
 
-### Common Issues
-
-**1. Backend won't start - Module not found**
-```bash
-# Make sure virtual environment is activated
-venv\Scripts\activate  # Windows
-source venv/bin/activate  # macOS/Linux
-
-# Reinstall dependencies
-pip install -r backend/requirements.txt
-```
-
-**2. Frontend shows blank page**
-```bash
-# Clear node modules and reinstall
-cd frontend
-rm -rf node_modules
-npm install
-npm run dev
-```
-
-**3. CORS errors in browser console**
-- Make sure the backend is running on port 8000
-- Check that `django-cors-headers` is installed and configured
-
-**4. Login fails with "Invalid credentials"**
-```bash
-# Re-run the seed data command
-cd backend
-python manage.py seed_data
-```
+6. **As Customer** again:
+   - See loan status as "Disbursed"
+   - Check account balance (increased by loan amount)
+   - Pay monthly EMIs
 
 ---
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ---
 

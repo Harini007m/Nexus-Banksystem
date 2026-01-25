@@ -1,23 +1,32 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { FiMail, FiLock, FiAlertCircle } from 'react-icons/fi';
+import { FiMail, FiLock, FiAlertCircle, FiArrowLeft } from 'react-icons/fi';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setLoading(true);
         try {
-            await login(email, password);
-            navigate('/');
+            const user = await login(email, password);
+            // Redirect based on role
+            if (user.is_officer) {
+                navigate('/officer');
+            } else {
+                navigate('/dashboard');
+            }
         } catch (err) {
             setError('Invalid email or password');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -25,6 +34,11 @@ const Login = () => {
         <div className="min-h-screen flex items-center justify-center p-4">
             <div className="glass-panel w-full max-w-md p-8 relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
+
+                {/* Back to Home */}
+                <Link to="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm mb-6 transition-colors">
+                    <FiArrowLeft /> Back to Home
+                </Link>
 
                 <h2 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Nexus</h2>
                 <p className="text-slate-400 text-center mb-8">Welcome back, please login.</p>
@@ -66,8 +80,16 @@ const Login = () => {
                         </div>
                     </div>
 
-                    <button type="submit" className="btn-primary">
-                        Sign In
+                    <button
+                        type="submit"
+                        className="btn-primary flex items-center justify-center gap-2"
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <span className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full"></span>
+                        ) : (
+                            'Sign In'
+                        )}
                     </button>
 
                     <p className="text-center text-slate-400 text-sm">
