@@ -1,24 +1,65 @@
 @import "tailwindcss";
 
-@layer base {
-  body {
-    @apply bg-slate-900 text-white font-sans antialiased;
-    background: radial-gradient(circle at top left, #1e293b, #0f172a);
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Outfit', system-ui, sans-serif;
+  
+  --color-primary-50: #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-400: #38bdf8;
+  --color-primary-500: #0ea5e9;
+  --color-primary-600: #0284c7;
+  
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-shine: shine 1.5s ease-in-out infinite;
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+  
+  @keyframes shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
   }
 }
 
-.glass-panel {
-  @apply bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl rounded-2xl;
+@layer base {
+  body {
+    @apply bg-slate-950 text-white font-sans antialiased overflow-x-hidden;
+    background-image: 
+      radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.08), transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08), transparent 25%);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
+  }
 }
 
-.input-field {
-  @apply w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-slate-400 transition-all;
-}
+@layer components {
+  .glass-panel {
+    @apply bg-white/[0.03] backdrop-blur-xl border border-white/[0.05] shadow-2xl;
+  }
+  
+  .glass-card {
+    @apply relative overflow-hidden bg-gradient-to-br from-white/[0.05] to-transparent backdrop-blur-md border border-white/[0.05] shadow-xl transition-all duration-300 hover:border-white/[0.1] hover:bg-white/[0.08] hover:shadow-2xl hover:-translate-y-1;
+  }
 
-.btn-primary {
-  @apply w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 transition-all transform hover:scale-[1.02];
-}
+  .text-gradient {
+    @apply bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent;
+  }
+  
+  .btn-primary {
+    @apply relative overflow-hidden bg-gradient-to-r from-blue-600 to-violet-600 text-white font-semibold py-3 px-8 rounded-xl shadow-lg shadow-blue-500/20 transition-all duration-300 hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98];
+  }
+  
+  .btn-secondary {
+    @apply bg-white/[0.05] text-white font-medium py-3 px-8 rounded-xl border border-white/[0.05] backdrop-blur-md transition-all duration-300 hover:bg-white/[0.1] hover:border-white/[0.1];
+  }
 
-.card-gradient {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  .input-field {
+    @apply w-full px-5 py-4 bg-white/[0.03] border border-white/[0.1] rounded-xl text-white placeholder-slate-400 transition-all duration-300 focus:outline-none focus:bg-white/[0.05] focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20;
+  }
 }
