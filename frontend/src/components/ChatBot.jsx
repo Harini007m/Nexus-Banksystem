@@ -45,26 +45,74 @@ const ChatBot = () => {
         setInputText('');
         setIsTyping(true);
 
-        // Find best match from FAQs
-        const lowerInput = text.toLowerCase();
-        const match = FAQS.find(faq =>
-            faq.keywords.some(keyword => lowerInput.includes(keyword.toLowerCase())) ||
-            faq.question.toLowerCase().includes(lowerInput)
-        );
+        // Normalize input
+        const lowerInput = text.toLowerCase().trim();
+        const words = lowerInput.split(/\s+/).filter(w => w.length > 3);
+
+        // Intent: Greetings
+        const greetings = ['hello', 'hi', 'hey', 'good morning', 'good afternoon'];
+        if (greetings.some(g => lowerInput.includes(g))) {
+            setTimeout(() => {
+                const response = "Hello! I am your intelligent Nexus assistant. I can help you understand our loan approval process, roles, and technical requirements. How can I assist you today?";
+                setMessages(prev => [...prev, { id: Date.now(), text: response, sender: 'bot' }]);
+                setIsTyping(false);
+            }, 1000);
+            return;
+        }
+
+        // Search for matches based on keywords and scores
+        let bestMatch = null;
+        let highestScore = 0;
+        let potentialMatches = [];
+
+        FAQS.forEach(faq => {
+            let score = 0;
+            // Exact question match (high priority)
+            if (faq.question.toLowerCase().includes(lowerInput)) score += 5;
+
+            // Keyword matching
+            faq.keywords.forEach(kw => {
+                if (lowerInput.includes(kw.toLowerCase())) score += 2;
+            });
+
+            // Word-by-word matching for incomplete queries
+            words.forEach(word => {
+                if (faq.question.toLowerCase().includes(word)) score += 1;
+            });
+
+            if (score > 1) {
+                potentialMatches.push({ faq, score });
+                if (score > highestScore) {
+                    highestScore = score;
+                    bestMatch = faq;
+                }
+            }
+        });
 
         setTimeout(() => {
-            let botResponse = "I'm sorry, I didn't understand that. Could you please rephrase? You can ask me about the loan approval system, roles, KYC, or risk assessment.";
+            let botResponse = "";
 
-            if (match) {
-                botResponse = match.answer;
-            } else if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
-                botResponse = "Hello! I can help you understand our loan approval process. Ask me about roles, KYC, or credit scores!";
+            if (highestScore > 4) {
+                // Strong match: Identified topic and level
+                const levelPrefix = bestMatch.level === 'high' ? "To provide a high-level overview: " :
+                    bestMatch.level === 'intermediate' ? "Based on the technical details: " : "";
+                botResponse = `${levelPrefix}${bestMatch.answer}`;
+            } else if (highestScore > 1 && potentialMatches.length > 1) {
+                // Ambiguous: Ask clarification
+                const topTwo = potentialMatches.sort((a, b) => b.score - a.score).slice(0, 2);
+                botResponse = `I found a couple of topics that might relate to your question. Are you asking about "${topTwo[0].faq.question}" or "${topTwo[1].faq.question}"? Please let me know so I can provide the most accurate information.`;
+            } else if (highestScore > 1) {
+                // Weak match: Closest valid explanation
+                botResponse = `I believe you're asking about ${bestMatch.question.replace('?', '')}. ${bestMatch.answer}`;
+            } else {
+                // No match: Polite fallback
+                botResponse = "I'm sorry, I don't have the exact answer for that in my knowledge base. I can, however, explain our loan approval process, role consolidation models, or KYC requirements. Would you like to know more about any of these topics?";
             }
 
             const botMessage = { id: Date.now() + 1, text: botResponse, sender: 'bot' };
             setMessages(prev => [...prev, botMessage]);
             setIsTyping(false);
-        }, 1000);
+        }, 1200);
     };
 
     const handleSend = async (e) => {
@@ -240,8 +288,8 @@ const ChatBot = () => {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(!isOpen)}
                 className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 z-50 overflow-hidden border-2 ${isOpen
-                        ? 'bg-slate-800 border-slate-600 rotate-90 shadow-2xl'
-                        : 'bg-slate-900 border-blue-500 hover:shadow-blue-500/50'
+                    ? 'bg-slate-800 border-slate-600 rotate-90 shadow-2xl'
+                    : 'bg-slate-900 border-blue-500 hover:shadow-blue-500/50'
                     }`}
                 style={{
                     boxShadow: isOpen ? '' : '0 0 15px #3b82f6, 0 0 30px #3b82f6'
