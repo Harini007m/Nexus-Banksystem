@@ -67,20 +67,27 @@ const ChatBot = () => {
 
         FAQS.forEach(faq => {
             let score = 0;
-            // Exact question match (high priority)
-            if (faq.question.toLowerCase().includes(lowerInput)) score += 5;
+            const faqQuestion = faq.question.toLowerCase();
 
-            // Keyword matching
+            // Exact or partial question match (high priority)
+            if (faqQuestion.includes(lowerInput)) score += 10;
+
+            // Keyword matching (weighted based on relevance)
             faq.keywords.forEach(kw => {
-                if (lowerInput.includes(kw.toLowerCase())) score += 2;
+                const lowerKw = kw.toLowerCase();
+                if (lowerInput === lowerKw) score += 8; // Exact keyword match
+                else if (lowerInput.includes(lowerKw)) score += 4; // Partial keyword match
+                else if (lowerKw.includes(lowerInput) && lowerInput.length > 2) score += 3; // Input is part of a keyword
             });
 
-            // Word-by-word matching for incomplete queries
-            words.forEach(word => {
-                if (faq.question.toLowerCase().includes(word)) score += 1;
+            // Word-by-word matching for informal queries
+            const queryWords = lowerInput.split(/\s+/).filter(w => w.length > 2);
+            queryWords.forEach(word => {
+                if (faqQuestion.includes(word)) score += 2;
+                if (faq.keywords.map(k => k.toLowerCase()).some(k => k.includes(word))) score += 1.5;
             });
 
-            if (score > 1) {
+            if (score > 1.5) {
                 potentialMatches.push({ faq, score });
                 if (score > highestScore) {
                     highestScore = score;
@@ -92,21 +99,21 @@ const ChatBot = () => {
         setTimeout(() => {
             let botResponse = "";
 
-            if (highestScore > 4) {
-                // Strong match: Identified topic and level
-                const levelPrefix = bestMatch.level === 'high' ? "To provide a high-level overview: " :
-                    bestMatch.level === 'intermediate' ? "Based on the technical details: " : "";
+            if (highestScore > 6) {
+                // High confidence match
+                const levelPrefix = bestMatch.level === 'high' ? "Certainly! From a strategic perspective: " :
+                    bestMatch.level === 'intermediate' ? "As per our technical guidelines: " : "";
                 botResponse = `${levelPrefix}${bestMatch.answer}`;
-            } else if (highestScore > 1 && potentialMatches.length > 1) {
-                // Ambiguous: Ask clarification
-                const topTwo = potentialMatches.sort((a, b) => b.score - a.score).slice(0, 2);
-                botResponse = `I found a couple of topics that might relate to your question. Are you asking about "${topTwo[0].faq.question}" or "${topTwo[1].faq.question}"? Please let me know so I can provide the most accurate information.`;
-            } else if (highestScore > 1) {
-                // Weak match: Closest valid explanation
-                botResponse = `I believe you're asking about ${bestMatch.question.replace('?', '')}. ${bestMatch.answer}`;
+            } else if (highestScore > 2 && potentialMatches.length > 1) {
+                // Potential matches: Ask clarification but provide the best one first
+                const sorted = potentialMatches.sort((a, b) => b.score - a.score);
+                botResponse = `I think you're asking about ${sorted[0].faq.question.replace('?', '')}. ${sorted[0].faq.answer}\n\nWas that what you were looking for? Or did you mean something related to ${sorted[1].faq.question}?`;
+            } else if (bestMatch) {
+                // Best effort match
+                botResponse = `To answer your question about ${bestMatch.question.toLowerCase().replace('?', '')}: ${bestMatch.answer}`;
             } else {
-                // No match: Polite fallback
-                botResponse = "I'm sorry, I don't have the exact answer for that in my knowledge base. I can, however, explain our loan approval process, role consolidation models, or KYC requirements. Would you like to know more about any of these topics?";
+                // Professional and helpful fallback (never "I don't know")
+                botResponse = "Nexus Bank offers a wide range of services including Personal, Education, and Home loans with competitive interest rates starting at 7.5%. We prioritize security and efficiency through our 4-role consolidated approval system. Could you tell me more about what you're looking for so I can provide specific details?";
             }
 
             const botMessage = { id: Date.now() + 1, text: botResponse, sender: 'bot' };
