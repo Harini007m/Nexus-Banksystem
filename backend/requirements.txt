@@ -7,3 +7,6 @@ celery
 redis
 reportlab
 python-dotenv
+gunicorn
+whitenoise
+dj-database-url
