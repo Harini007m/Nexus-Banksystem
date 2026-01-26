@@ -53,7 +53,7 @@ const ChatBot = () => {
         );
 
         setTimeout(() => {
-            let botResponse = "I'm sorry, I didn't verify that. Could you please rephrase? You can ask me about the loan approval system, roles, KYC, or risk assessment.";
+            let botResponse = "I'm sorry, I didn't understand that. Could you please rephrase? You can ask me about the loan approval system, roles, KYC, or risk assessment.";
 
             if (match) {
                 botResponse = match.answer;
@@ -240,8 +240,8 @@ const ChatBot = () => {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(!isOpen)}
                 className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 z-50 overflow-hidden border-2 ${isOpen
-                    ? 'bg-slate-800 border-slate-600 rotate-90 shadow-2xl'
-                    : 'bg-slate-900 border-blue-500 hover:shadow-blue-500/50'
+                        ? 'bg-slate-800 border-slate-600 rotate-90 shadow-2xl'
+                        : 'bg-slate-900 border-blue-500 hover:shadow-blue-500/50'
                     }`}
                 style={{
                     boxShadow: isOpen ? '' : '0 0 15px #3b82f6, 0 0 30px #3b82f6'

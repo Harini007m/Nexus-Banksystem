@@ -1,30 +1,25 @@
 export const FAQS = [
     // SIMPLE DEFAULT QUESTIONS
     {
-        question: "What is a bank loan?",
-        answer: "A bank loan is money given by a bank to a customer that must be repaid with interest over time.",
-        keywords: ["bank loan", "what is a loan"]
-    },
-    {
         question: "Why do banks check details before giving a loan?",
         answer: "Banks check details to make sure the customer can repay the loan and to reduce risk.",
         keywords: ["check details", "why check", "before giving"]
     },
     {
         question: "What is KYC?",
-        answer: "KYC (Know Your Customer) is the process of verifying a customer’s identity using official documents.",
+        answer: "KYC (Know Your Customer) is the process of verifying a customer's identity using official documents.",
         keywords: ["what is kyc", "know your customer"]
     },
     {
         question: "Who gives final approval for a loan?",
-        answer: "The bank’s approval authority or manager gives the final approval for a loan.",
+        answer: "The bank's approval authority or manager gives the final approval for a loan.",
         keywords: ["final approval", "who approves"]
     },
 
     // BASIC-LEVEL QUESTIONS
     {
         question: "What is a bank loan approval system?",
-        answer: "A bank loan approval system is a structured process used by banks to evaluate, approve, and disburse loans after assessing the applicant’s eligibility, risk, and legal compliance.",
+        answer: "A bank loan approval system is a structured process used by banks to evaluate, approve, and disburse loans after assessing the applicant's eligibility, risk, and legal compliance.",
         keywords: ["approval system", "loan approval", "what is"]
     },
     {
@@ -54,12 +49,12 @@ export const FAQS = [
     },
     {
         question: "What is a credit score and why is it checked?",
-        answer: "A credit score reflects the applicant’s creditworthiness and repayment history. It is checked to assess default risk.",
+        answer: "A credit score reflects the applicant's creditworthiness and repayment history. It is checked to assess default risk.",
         keywords: ["credit score", "checked"]
     },
     {
         question: "What is meant by risk assessment in loan approval?",
-        answer: "Risk assessment evaluates the borrower’s ability and willingness to repay the loan without default.",
+        answer: "Risk assessment evaluates the borrower's ability and willingness to repay the loan without default.",
         keywords: ["risk assessment", "meant by"]
     },
 
