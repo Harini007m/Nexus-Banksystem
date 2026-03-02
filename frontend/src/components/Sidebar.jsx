@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FiHome, FiDollarSign, FiCreditCard, FiTrendingUp, FiLogOut, FiFileText, FiUsers, FiShield, FiCheckSquare, FiX } from 'react-icons/fi';
+import { FiHome, FiDollarSign, FiCreditCard, FiTrendingUp, FiLogOut, FiFileText, FiUsers, FiShield, FiCheckSquare, FiX, FiActivity } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 
 const Sidebar = ({ mobileOpen, onClose }) => {
@@ -13,6 +13,7 @@ const Sidebar = ({ mobileOpen, onClose }) => {
         { name: 'Transactions', path: '/transactions', icon: FiDollarSign },
         { name: 'Loans', path: '/loans', icon: FiCreditCard },
         { name: 'Investments', path: '/investments', icon: FiTrendingUp },
+        { name: 'Budget & Finance', path: '/finance', icon: FiActivity },
     ];
 
     // Officer navigation links

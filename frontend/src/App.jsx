@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Loans from './pages/Loans';
 import Investments from './pages/Investments';
 import Transactions from './pages/Transactions';
+import FinanceDashboard from './pages/FinanceDashboard';
 import LandingPage from './pages/LandingPage';
 import OfficerDashboard from './pages/OfficerDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -27,6 +28,7 @@ function App() {
           <Route path="/loans" element={<Loans />} />
           <Route path="/investments" element={<Investments />} />
           <Route path="/transactions" element={<Transactions />} />
+          <Route path="/finance" element={<FinanceDashboard />} />
 
           {/* Officer Routes */}
           <Route path="/officer" element={<OfficerDashboard />} />
