@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+// API base URL - use environment variable or fallback to default
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
 const api = axios.create({
     baseURL: API_BASE_URL,
@@ -30,7 +31,7 @@ api.interceptors.response.use(
             originalRequest._retry = true;
             try {
                 const refreshToken = localStorage.getItem('refresh_token');
-                const response = await axios.post(`${API_BASE_URL.replace('/api', '')}/api/users/token/refresh/`, {
+                const response = await axios.post(`${API_BASE_URL}/users/token/refresh/`, {
                     refresh: refreshToken
                 });
 
@@ -52,3 +53,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+

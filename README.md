@@ -96,18 +96,83 @@ Each officer has a dedicated dashboard showing only loans relevant to their stag
 
 ## 📦 Installation
 
-### Prerequisites
+There are two ways to run this project: **Docker (Recommended)** or **Manual Setup**.
+
+---
+
+### 🐳 Option 1: Docker (Recommended)
+
+The easiest way to get started. Requires only Docker installed.
+
+#### Prerequisites
+- [Docker](https://docs.docker.com/get-docker/) (version 20.10+)
+- [Docker Compose](https://docs.docker.com/compose/install/) (version 2.0+)
+
+#### Quick Start
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/Harini007m/Nexus-Banksystem.git
+cd Nexus-Banksystem
+
+# 2. Create environment file
+cp .env.example .env
+
+# 3. Build and start all services
+docker-compose up --build
+
+# 4. In a new terminal, seed the database
+docker-compose exec backend python manage.py seed_data
+```
+
+#### Access Points (Docker)
+
+| Service | URL |
+|---------|-----|
+| **Frontend** | http://localhost |
+| **Backend API** | http://localhost:8000/api |
+| **Django Admin** | http://localhost:8000/admin |
+
+#### Docker Commands
+
+```bash
+# Start services
+docker-compose up -d
+
+# Stop services
+docker-compose down
+
+# View logs
+docker-compose logs -f
+
+# Rebuild after code changes
+docker-compose up --build -d
+
+# Reset database (⚠️ deletes data)
+docker-compose down -v
+docker-compose up --build -d
+```
+
+> 📖 For detailed Docker documentation, see [DOCKER.md](DOCKER.md)
+
+---
+
+### 🛠️ Option 2: Manual Setup
+
+For development with hot-reload and more control.
+
+#### Prerequisites
 - **Python 3.10+** - [Download](https://python.org/downloads)
 - **Node.js 18+** - [Download](https://nodejs.org)
 - **Git** - [Download](https://git-scm.com)
 
-### Step 1: Clone Repository
+#### Step 1: Clone Repository
 ```bash
 git clone https://github.com/Harini007m/Nexus-Banksystem.git
 cd Nexus-Banksystem
 ```
 
-### Step 2: Backend Setup
+#### Step 2: Backend Setup
 ```bash
 # Create virtual environment
 python -m venv venv
@@ -129,7 +194,7 @@ python manage.py migrate
 python manage.py seed_data
 ```
 
-### Step 3: Frontend Setup
+#### Step 3: Frontend Setup
 ```bash
 cd frontend
 npm install
@@ -139,7 +204,7 @@ npm install
 
 ## 🚀 Usage
 
-### Start the Application
+### Start the Application (Manual Setup)
 
 **Terminal 1 - Backend:**
 ```bash
@@ -155,7 +220,7 @@ npm run dev
 ```
 Frontend runs at: **http://localhost:5173**
 
-### Access Points
+### Access Points (Manual Setup)
 
 | URL | Description |
 |-----|-------------|

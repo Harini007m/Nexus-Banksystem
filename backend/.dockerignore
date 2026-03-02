@@ -1,25 +1,46 @@
-__pycache__
-*.pyc
-*.pyo
-*.pyd
-.Python
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
 *.so
-*.egg
-*.egg-info
-dist
-build
-.env
-.venv
+.Python
 venv/
-ENV/
 env/
-.git
-.gitignore
+.venv/
+ENV/
+
+# Django
 *.log
+local_settings.py
 db.sqlite3
-.DS_Store
-.vscode
-.idea
+*.pot
+*.pyc
+
+# Static and media (will be collected in container)
+staticfiles/
+media/
+
+# IDE
+.idea/
+.vscode/
 *.swp
 *.swo
-*~
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Misc
+.env
+*.env.local
+.DS_Store
+Thumbs.db
