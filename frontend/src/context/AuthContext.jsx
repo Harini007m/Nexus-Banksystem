@@ -41,7 +41,15 @@ export const AuthProvider = ({ children }) => {
     };
 
     const register = async (userData) => {
-        await api.post('/users/register/', userData);
+        // Only send fields the backend accepts
+        const payload = {
+            email: userData.email,
+            password: userData.password,
+            first_name: userData.first_name,
+            last_name: userData.last_name,
+            phone_number: userData.phone_number || '',
+        };
+        await api.post('/users/register/', payload);
     };
 
     const logout = () => {

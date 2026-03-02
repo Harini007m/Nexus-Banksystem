@@ -16,31 +16,24 @@ git clone https://github.com/Harini007m/Nexus-Banksystem.git
 cd Nexus-Banksystem
 ```
 
-### 2. Create Environment File
+### 2. Environment Configuration (Optional)
 
-Copy the example environment file and customize it:
+The application works with default settings. For customization:
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env` with your preferred settings:
+Edit `.env` with your settings:
 
 ```env
-# Database Configuration
-POSTGRES_DB=nexus_bank
-POSTGRES_USER=nexus_user
-POSTGRES_PASSWORD=your_secure_password_here
-
 # Django Configuration
-DEBUG=False
+DEBUG=True
 SECRET_KEY=your-super-secret-key-make-it-long-and-random
+ALLOWED_HOSTS=localhost,127.0.0.1,backend
 
-# Allowed Hosts
-ALLOWED_HOSTS=localhost,127.0.0.1
-
-# CORS
-CORS_ALLOWED_ORIGINS=http://localhost,http://localhost:80
+# CORS Configuration
+CORS_ALLOWED_ORIGINS=http://localhost,http://localhost:80,http://localhost:5173
 ```
 
 ### 3. Build and Run
