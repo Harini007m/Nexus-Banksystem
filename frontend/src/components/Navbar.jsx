@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { FiBell, FiX, FiCheck, FiDollarSign, FiArrowRight, FiTrendingUp } from 'react-icons/fi';
+import { FiBell, FiX, FiDollarSign, FiArrowRight, FiTrendingUp, FiMenu } from 'react-icons/fi';
 import api from '../api/axios';
 
-const Navbar = () => {
+const Navbar = ({ onMobileMenuToggle }) => {
     const { user } = useAuth();
     const [showNotifications, setShowNotifications] = useState(false);
     const [notifications, setNotifications] = useState([]);
@@ -71,8 +71,17 @@ const Navbar = () => {
     };
 
     return (
-        <div className="h-20 px-8 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-white">
+        <div className="h-20 px-4 md:px-8 flex items-center justify-between">
+            {/* Hamburger button — mobile only */}
+            <button
+                onClick={onMobileMenuToggle}
+                className="md:hidden p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-700/50 mr-3"
+                aria-label="Open menu"
+            >
+                <FiMenu className="text-2xl" />
+            </button>
+
+            <h2 className="text-xl font-semibold text-white flex-1">
                 Welcome back, {user?.first_name || 'User'}
             </h2>
 
