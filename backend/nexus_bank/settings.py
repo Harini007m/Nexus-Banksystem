@@ -28,7 +28,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-1y)zmmgos&1mcd@&u1&4d
 DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
 # Allowed hosts from environment variable
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# Added local network IP (192.168.31.33) so other devices on the same WiFi can connect
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,192.168.31.33').split(',')
 
 
 # Application definition
@@ -166,12 +167,13 @@ SIMPLE_JWT = {
 }
 
 # CORS Configuration
+# Allow all origins in dev so the friend's laptop (different IP) can also call this API
 CORS_ALLOWED_ORIGINS_ENV = os.environ.get('CORS_ALLOWED_ORIGINS', '')
 if CORS_ALLOWED_ORIGINS_ENV:
     CORS_ALLOWED_ORIGINS = [origin.strip() for origin in CORS_ALLOWED_ORIGINS_ENV.split(',')]
     CORS_ALLOW_ALL_ORIGINS = False
 else:
-    CORS_ALLOW_ALL_ORIGINS = True  # For dev only
+    CORS_ALLOW_ALL_ORIGINS = True  # For dev - allows cross-device access on same network
 
 # Celery Configuration
 CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
